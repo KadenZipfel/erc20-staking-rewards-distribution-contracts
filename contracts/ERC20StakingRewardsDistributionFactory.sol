@@ -8,11 +8,17 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "./interfaces/IERC20StakingRewardsDistribution.sol";
 
+/**
+ * Error codes:
+ *
+ * SRDF01: invalid distribution address
+ */
 contract ERC20StakingRewardsDistributionFactory is Ownable {
     using SafeERC20 for IERC20;
 
     address public implementation;
     IERC20StakingRewardsDistribution[] public distributions;
+    mapping(address => bool) validDistributions;
 
     event DistributionCreated(address owner, address deployedAt);
 
@@ -55,9 +61,32 @@ contract ERC20StakingRewardsDistributionFactory is Ownable {
             _locked,
             _stakingCap
         );
-        _distribution.transferOwnership(msg.sender);
+        address _owner = owner();
+        _distribution.transferOwnership(_owner);
         distributions.push(_distribution);
-        emit DistributionCreated(msg.sender, address(_distribution));
+        validDistributions[address(_distribution)] = true;
+        emit DistributionCreated(_owner, address(_distribution));
+    }
+
+    function approveDistribution(
+        address _distribution,
+        uint256 _amount,
+        address _token
+    ) external onlyOwner {
+        require(validDistributions[_distribution] == true, "SRDF01");
+        IERC20 _rewardToken = IERC20(_token);
+        _rewardToken.approve(_distribution, _amount);
+    }
+
+    function fundDistribution(
+        address _distribution,
+        uint256 _amount,
+        address _token
+    ) external onlyOwner {
+        require(validDistributions[_distribution] == true, "SRDF01");
+        IERC20StakingRewardsDistribution _distributionContract =
+            IERC20StakingRewardsDistribution(_distribution);
+        _distributionContract.addRewards(_token, _amount);
     }
 
     function getDistributionsAmount() external view returns (uint256) {
