@@ -7,6 +7,7 @@ contract VerifyRewardEmissions is ERC20StakingRewardsDistribution {
     function echidna_validRewardPerStakedToken() public view returns (bool) {
         for (uint256 i = 0; i < rewards.length; i++) {
             if (
+                rewards[i].perStakedToken > 0 &&
                 rewards[i].amount / rewards[i].perStakedToken !=
                 totalStakedTokensAmount
             ) {
