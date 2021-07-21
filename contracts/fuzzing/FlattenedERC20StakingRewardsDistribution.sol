@@ -310,6 +310,8 @@ contract ERC20StakingRewardsDistribution {
             }
             // Assert lower bound of _reward.unassigned
             assert(_reward.unassigned >= _reward.amount * ((endingTimestamp - lastConsolidationTimestamp) / secondsDuration));
+            // Assert upper bound of _reward.unassigned
+            assert(_reward.unassigned <= IERC20(_reward.token).balanceOf(address(this)));
         }
     }
 
