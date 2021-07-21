@@ -303,6 +303,11 @@ contract ERC20StakingRewardsDistribution {
                 MULTIPLIER;
             _stakerRewardInfo.consolidatedPerStakedToken = _reward
                 .perStakedToken;
+
+            if (_reward.perStakedToken > 0) {
+                // Assert a valid _rewardPerStakedToken
+                assert(_reward.amount / _reward.perStakedToken == totalStakedTokensAmount);
+            }
         }
     }
 
