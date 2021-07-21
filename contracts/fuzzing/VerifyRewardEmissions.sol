@@ -52,4 +52,14 @@ contract VerifyRewardEmissions is ERC20StakingRewardsDistribution {
         }
         return true;
     }
+
+    // Make sure fuzzing is working correctly (should fail)
+    function echidna_falsePositive() public view returns (bool) {
+        for (uint256 i = 0; i < rewards.length; i++) {
+            if (rewards[i].amount > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
