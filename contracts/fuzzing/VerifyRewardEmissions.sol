@@ -19,6 +19,7 @@ contract VerifyRewardEmissions is ERC20StakingRewardsDistribution {
         return true;
     }
 
+    // Assert that unassigned rewards is always between remaining reward amount and contract balance
     function echidna_boundedUnassignedRewards() public view returns (bool) {
         for (uint256 i = 0; i < rewards.length; i++) {
             if (
