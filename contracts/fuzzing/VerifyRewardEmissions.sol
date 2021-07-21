@@ -18,4 +18,25 @@ contract VerifyRewardEmissions is ERC20StakingRewardsDistribution {
         }
         return true;
     }
+
+    function echidna_boundedUnassignedRewards() public view returns (bool) {
+        for (uint256 i = 0; i < rewards.length; i++) {
+            if (
+                rewards[i].unassigned <
+                (rewards[i].amount *
+                    ((endingTimestamp - block.timestamp) /
+                        (endingTimestamp - startingTimestamp)))
+            ) {
+                return false;
+            }
+
+            if (
+                rewards[i].unassigned >
+                IERC20(rewards[i].token).balanceOf(address(this))
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
