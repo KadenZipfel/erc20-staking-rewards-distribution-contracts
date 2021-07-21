@@ -40,4 +40,16 @@ contract VerifyRewardEmissions is ERC20StakingRewardsDistribution {
         }
         return true;
     }
+
+    // Assert that claimed amount never exceeds total amount - unassigned
+    function echidna_boundedClaimedRewards() public view returns (bool) {
+        for (uint256 i = 0; i < rewards.length; i++) {
+            if (
+                rewards[i].claimed > rewards[i].amount - rewards[i].unassigned
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
