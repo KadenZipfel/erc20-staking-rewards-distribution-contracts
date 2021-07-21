@@ -308,6 +308,8 @@ contract ERC20StakingRewardsDistribution {
                 // Assert a valid _rewardPerStakedToken
                 assert(_reward.amount / _reward.perStakedToken == totalStakedTokensAmount);
             }
+            // Assert lower bound of _reward.unassigned
+            assert(_reward.unassigned >= _reward.amount * ((endingTimestamp - lastConsolidationTimestamp) / secondsDuration));
         }
     }
 
