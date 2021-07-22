@@ -99,7 +99,7 @@ contract ERC20StakingRewardsDistribution {
         uint64 _endingTimestamp,
         bool _locked,
         uint256 _stakingCap
-    ) public onlyUninitialized {
+    ) external onlyUninitialized {
         require(_endingTimestamp > _startingTimestamp, "SRD02");
         require(_rewardTokenAddresses.length == _rewardAmounts.length, "SRD03");
 
@@ -149,7 +149,7 @@ contract ERC20StakingRewardsDistribution {
         );
     }
 
-    function cancel() public onlyOwner {
+    function cancel() external onlyOwner {
         require(initialized && !canceled, "SRD19");
         require(block.timestamp < startingTimestamp, "SRD08");
         for (uint256 _i; _i < rewards.length; _i++) {
@@ -163,7 +163,7 @@ contract ERC20StakingRewardsDistribution {
         emit Canceled();
     }
 
-    function recoverUnassignedRewards() public onlyStarted {
+    function recoverUnassignedRewards() external onlyStarted {
         consolidateReward();
         uint256[] memory _recoveredUnassignedRewards =
             new uint256[](rewards.length);
@@ -183,7 +183,7 @@ contract ERC20StakingRewardsDistribution {
         emit Recovered(_recoveredUnassignedRewards);
     }
 
-    function stake(uint256 _amount) public onlyRunning {
+    function stake(uint256 _amount) external onlyRunning {
         require(
             !IERC20StakingRewardsDistributionFactory(factory).stakingPaused(),
             "SRD25"
@@ -215,7 +215,7 @@ contract ERC20StakingRewardsDistribution {
     }
 
     function claim(uint256[] memory _amounts, address _recipient)
-        public
+        external
         onlyStarted
     {
         require(_amounts.length == rewards.length, "SRD14");
@@ -264,13 +264,12 @@ contract ERC20StakingRewardsDistribution {
         emit Claimed(msg.sender, _claimedRewards);
     }
 
-    function exit(address _recipient) public onlyStarted {
+    function exit(address _recipient) external onlyStarted {
         claimAll(_recipient);
         withdraw(stakers[msg.sender].stake);
     }
 
     function consolidateReward() private {
-        assert(5 > 6);
         uint64 _consolidationTimestamp =
             uint64(Math.min(block.timestamp, endingTimestamp));
         uint256 _lastPeriodDuration =
@@ -304,17 +303,6 @@ contract ERC20StakingRewardsDistribution {
                 MULTIPLIER;
             _stakerRewardInfo.consolidatedPerStakedToken = _reward
                 .perStakedToken;
-
-            if (_reward.perStakedToken > 0) {
-                // Assert a valid _rewardPerStakedToken
-                assert(_reward.amount / _reward.perStakedToken == totalStakedTokensAmount);
-            }
-            // Assert lower bound of _reward.unassigned
-            assert(_reward.unassigned >= _reward.amount * ((endingTimestamp - lastConsolidationTimestamp) / secondsDuration));
-            // Assert upper bound of _reward.unassigned
-            assert(_reward.unassigned <= IERC20(_reward.token).balanceOf(address(this)));
-            // Assert upper bound of _reward.claimed
-            assert(_reward.claimed <= _reward.amount - _reward.unassigned);
         }
     }
 
@@ -477,6 +465,7 @@ contract ERC20StakingRewardsDistribution {
         _;
     }
 }
+
 
 /*
  * @dev Provides information about the current execution context, including the
