@@ -20,13 +20,16 @@ contract ERC20StakingRewardsDistributionFuzzing {
     address internal holder;
 
     constructor() {
+        // Create two reward tokens and one staking token
         IERC20 token1 = new TestERC20("token1", "tkn1");
         IERC20 token2 = new TestERC20("token2", "tkn2");
         IERC20 token3 = new TestERC20("token3", "tkn3");
 
+        // Instantiate staker contract and fund with staking token
         holder = address(new Staker(address(token3), address(this)));
         token3.transfer(holder, 1 * 10**18);
 
+        // Populate reward token and amounts arrays
         address[] memory rewardTokens;
         rewardTokens[0] = address(token1);
         rewardTokens[1] = address(token2);
@@ -34,12 +37,15 @@ contract ERC20StakingRewardsDistributionFuzzing {
         rewardAmounts[0] = uint256(1 * 10**18);
         rewardAmounts[1] = uint256(2 * 10**18);
 
+        // Instantiate reference distribution implementation
         ERC20StakingRewardsDistribution implementation =
             new ERC20StakingRewardsDistribution();
 
+        // Instantiate factory with reference implementation
         ERC20StakingRewardsDistributionFactory factory =
             new ERC20StakingRewardsDistributionFactory(address(implementation));
 
+        // Create distribution
         factory.createDistribution(
             rewardTokens,
             address(token3),
@@ -50,6 +56,7 @@ contract ERC20StakingRewardsDistributionFuzzing {
             1000000000
         );
 
+        // Store distribution
         distribution = factory.distributions(0);
     }
 }
