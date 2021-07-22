@@ -1,1 +1,2 @@
 corpusDir: "corpus"
+checkAsserts: true
