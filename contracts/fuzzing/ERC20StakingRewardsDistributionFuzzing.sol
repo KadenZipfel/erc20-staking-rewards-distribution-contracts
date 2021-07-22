@@ -8,13 +8,6 @@ import {
     IERC20
 } from "./FlattenedERC20StakingRewardsDistribution.sol";
 
-// Contract receives staking token and allows for it to be retrieved
-contract Staker {
-    constructor(address stakingToken, address retriever) {
-        TestERC20(stakingToken).approve(retriever, type(uint256).max);
-    }
-}
-
 contract ERC20StakingRewardsDistributionFuzzing {
     IERC20StakingRewardsDistribution internal distribution;
     address internal holder;
@@ -24,10 +17,6 @@ contract ERC20StakingRewardsDistributionFuzzing {
         IERC20 token1 = new TestERC20("token1", "tkn1");
         IERC20 token2 = new TestERC20("token2", "tkn2");
         IERC20 token3 = new TestERC20("token3", "tkn3");
-
-        // Instantiate staker contract and fund with staking token
-        holder = address(new Staker(address(token3), address(this)));
-        token3.transfer(holder, 1 * 10**18);
 
         // Populate reward token and amounts arrays
         address[] memory rewardTokens;
@@ -51,7 +40,7 @@ contract ERC20StakingRewardsDistributionFuzzing {
             address(token3),
             rewardAmounts,
             uint64(block.timestamp),
-            uint64(block.timestamp + 100000),
+            uint64(block.timestamp + 10000),
             false,
             1000000000
         );
