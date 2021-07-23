@@ -109,6 +109,7 @@ contract ERC20StakingRewardsDistributionFuzzing {
         rewardBalancesAfter[0] = token1.balanceOf(address(this));
         rewardBalancesAfter[1] = token2.balanceOf(address(this));
 
+        // Assert that all reward balances increase by corresponding amounts
         for (uint256 i; i < rewardBalancesBefore.length; i++) {
             if (
                 rewardBalancesBefore[i] + amounts[i] != rewardBalancesAfter[i]
@@ -134,6 +135,7 @@ contract ERC20StakingRewardsDistributionFuzzing {
                 atLeastOneNonZeroClaim = true;
             }
         }
+        // Assert that at least one reward claim is non-zero
         if (!atLeastOneNonZeroClaim) {
             emit AssertionFailed();
         }
