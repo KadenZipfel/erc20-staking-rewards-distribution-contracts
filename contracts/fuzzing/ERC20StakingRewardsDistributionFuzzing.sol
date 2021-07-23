@@ -117,4 +117,25 @@ contract ERC20StakingRewardsDistributionFuzzing {
             }
         }
     }
+
+    // Test claimAll function
+    function claimAll() public {
+        uint256[] memory rewardBalancesBefore;
+        rewardBalancesBefore[0] = token1.balanceOf(address(this));
+        rewardBalancesBefore[1] = token2.balanceOf(address(this));
+        distribution.claimAll(address(this));
+        uint256[] memory rewardBalancesAfter;
+        rewardBalancesAfter[0] = token1.balanceOf(address(this));
+        rewardBalancesAfter[1] = token2.balanceOf(address(this));
+
+        bool atLeastOneNonZeroClaim;
+        for (uint256 i; i < rewardBalancesBefore.length; i++) {
+            if (rewardBalancesBefore[i] < rewardBalancesAfter[i]) {
+                atLeastOneNonZeroClaim = true;
+            }
+        }
+        if (!atLeastOneNonZeroClaim) {
+            emit AssertionFailed();
+        }
+    }
 }
