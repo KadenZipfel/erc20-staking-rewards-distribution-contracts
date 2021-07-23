@@ -67,9 +67,11 @@ contract ERC20StakingRewardsDistributionFuzzing {
     function stake(uint256 amount) public {
         uint256 stakerTokenBalanceBefore = token3.balanceOf(address(this));
         uint256 totalStakedBefore = distribution.totalStakedTokensAmount();
+        uint256 stakedTokensBefore = distribution.stakedTokensOf(address(this));
         distribution.stake(amount);
         uint256 stakerTokenBalanceAfter = token3.balanceOf(address(this));
         uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
+        uint256 stakedTokensAfter = distribution.stakedTokensOf(address(this));
 
         // Assert that staker token balance decreases by amount
         if (stakerTokenBalanceBefore - amount != stakerTokenBalanceAfter) {
@@ -79,22 +81,32 @@ contract ERC20StakingRewardsDistributionFuzzing {
         if (totalStakedBefore + amount != totalStakedAfter) {
             emit AssertionFailed();
         }
+        // Assert that staked tokens increases by amount
+        if (stakedTokensBefore + amount != stakedTokensAfter) {
+            emit AssertionFailed();
+        }
     }
 
     // Test withdraw function
     function withdraw(uint256 amount) public {
         uint256 stakerTokenBalanceBefore = token3.balanceOf(address(this));
         uint256 totalStakedBefore = distribution.totalStakedTokensAmount();
+        uint256 stakedTokensBefore = distribution.stakedTokensOf(address(this));
         distribution.withdraw(amount);
         uint256 stakerTokenBalanceAfter = token3.balanceOf(address(this));
         uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
+        uint256 stakedTokensAfter = distribution.stakedTokensOf(address(this));
 
         // Assert that staker token balance increases by amount
         if (stakerTokenBalanceBefore + amount != stakerTokenBalanceAfter) {
             emit AssertionFailed();
         }
-        // Assert that total staked increases by amount
+        // Assert that total staked decreases by amount
         if (totalStakedBefore - amount != totalStakedAfter) {
+            emit AssertionFailed();
+        }
+        // Assert that staked tokens decreases by amount
+        if (stakedTokensBefore - amount != stakedTokensAfter) {
             emit AssertionFailed();
         }
     }
