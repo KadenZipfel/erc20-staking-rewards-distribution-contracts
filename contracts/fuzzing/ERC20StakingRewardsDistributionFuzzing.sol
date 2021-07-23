@@ -65,11 +65,16 @@ contract ERC20StakingRewardsDistributionFuzzing {
 
     // Test stake function
     function stake(uint256 amount) public {
-        uint256 stakingTokenBalanceBefore = token3.balanceOf(address(this));
+        uint256 stakerTokenBalanceBefore = token3.balanceOf(address(this));
+        uint256 totalStakedBefore = distribution.totalStakedTokensAmount();
         distribution.stake(amount);
-        uint256 stakingTokenBalanceAfter = token3.balanceOf(address(this));
+        uint256 stakerTokenBalanceAfter = token3.balanceOf(address(this));
+        uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
 
-        if (stakingTokenBalanceBefore == amount + stakingTokenBalanceAfter) {
+        if (stakerTokenBalanceBefore != amount + stakerTokenBalanceAfter) {
+            emit AssertionFailed();
+        }
+        if (totalStakedBefore + amount != totalStakedAfter) {
             emit AssertionFailed();
         }
     }
