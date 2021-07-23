@@ -17,6 +17,8 @@ contract ERC20StakingRewardsDistributionFuzzing {
     IERC20 token2;
     IERC20 token3;
 
+    event AssertionFailed();
+
     constructor() {
         // Create two reward tokens and one staking token
         token1 = new TestERC20("token1", "tkn1");
@@ -67,10 +69,8 @@ contract ERC20StakingRewardsDistributionFuzzing {
         distribution.stake(amount);
         uint256 stakingTokenBalanceAfter = token3.balanceOf(address(this));
 
-        assert(stakingTokenBalanceBefore == amount + stakingTokenBalanceAfter);
-    }
-
-    function falsePositive() public pure {
-        assert(2 + 2 == 5);
+        if (stakingTokenBalanceBefore == amount + stakingTokenBalanceAfter) {
+            emit AssertionFailed();
+        }
     }
 }
