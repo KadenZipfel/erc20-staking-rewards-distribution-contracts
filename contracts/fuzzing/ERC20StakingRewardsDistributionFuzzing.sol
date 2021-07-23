@@ -121,6 +121,8 @@ contract ERC20StakingRewardsDistributionFuzzing {
 
     // Test claimAll function
     function claimAll() public {
+        uint256[] memory claimableRewards =
+            distribution.claimableRewards(address(this));
         uint256[] memory rewardBalancesBefore;
         rewardBalancesBefore[0] = token1.balanceOf(address(this));
         rewardBalancesBefore[1] = token2.balanceOf(address(this));
@@ -129,15 +131,14 @@ contract ERC20StakingRewardsDistributionFuzzing {
         rewardBalancesAfter[0] = token1.balanceOf(address(this));
         rewardBalancesAfter[1] = token2.balanceOf(address(this));
 
-        bool atLeastOneNonZeroClaim;
+        // Assert that reward token balances are increasing by expected amounts
         for (uint256 i; i < rewardBalancesBefore.length; i++) {
-            if (rewardBalancesBefore[i] < rewardBalancesAfter[i]) {
-                atLeastOneNonZeroClaim = true;
+            if (
+                rewardBalancesBefore[i] + claimableRewards[i] !=
+                rewardBalancesAfter[i]
+            ) {
+                emit AssertionFailed();
             }
-        }
-        // Assert that at least one reward claim is non-zero
-        if (!atLeastOneNonZeroClaim) {
-            emit AssertionFailed();
         }
     }
 }
