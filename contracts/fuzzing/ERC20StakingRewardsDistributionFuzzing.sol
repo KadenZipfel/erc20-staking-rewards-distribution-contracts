@@ -71,9 +71,11 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256 stakerTokenBalanceAfter = token3.balanceOf(address(this));
         uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
 
+        // Assert that staker token balance decreases by amount
         if (stakerTokenBalanceBefore - amount != stakerTokenBalanceAfter) {
             emit AssertionFailed();
         }
+        // Assert that total staked increases by amount
         if (totalStakedBefore + amount != totalStakedAfter) {
             emit AssertionFailed();
         }
@@ -87,9 +89,11 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256 stakerTokenBalanceAfter = token3.balanceOf(address(this));
         uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
 
+        // Assert that staker token balance increases by amount
         if (stakerTokenBalanceBefore + amount != stakerTokenBalanceAfter) {
             emit AssertionFailed();
         }
+        // Assert that total staked increases by amount
         if (totalStakedBefore - amount != totalStakedAfter) {
             emit AssertionFailed();
         }
