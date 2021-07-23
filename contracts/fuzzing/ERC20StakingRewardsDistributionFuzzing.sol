@@ -153,4 +153,36 @@ contract ERC20StakingRewardsDistributionFuzzing {
             }
         }
     }
+
+    // Test cancel function
+    function cancel() public {
+        uint256[] memory distributionRewardBalances;
+        distributionRewardBalances[0] = token1.balanceOf(address(distribution));
+        distributionRewardBalances[1] = token2.balanceOf(address(distribution));
+        uint256[] memory ownerRewardBalancesBefore;
+        ownerRewardBalancesBefore[0] = token1.balanceOf(address(this));
+        ownerRewardBalancesBefore[1] = token2.balanceOf(address(this));
+        distribution.cancel();
+        uint256[] memory ownerRewardBalancesAfter;
+        ownerRewardBalancesAfter[0] = token1.balanceOf(address(this));
+        ownerRewardBalancesAfter[1] = token2.balanceOf(address(this));
+
+        // Assert that contract owner cancelled
+        if (msg.sender != distribution.owner()) {
+            emit AssertionFailed();
+        }
+        // Assert that all rewards transferred to owner address
+        for (uint256 i; i < distributionRewardBalances.length; i++) {
+            if (
+                ownerRewardBalancesAfter[i] + distributionRewardBalances[i] !=
+                ownerRewardBalancesAfter[i]
+            ) {
+                emit AssertionFailed();
+            }
+        }
+        // Assert that cancelled = true
+        if (!distribution.canceled()) {
+            emit AssertionFailed();
+        }
+    }
 }
