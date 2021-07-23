@@ -71,10 +71,26 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256 stakerTokenBalanceAfter = token3.balanceOf(address(this));
         uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
 
-        if (stakerTokenBalanceBefore != amount + stakerTokenBalanceAfter) {
+        if (stakerTokenBalanceBefore - amount != stakerTokenBalanceAfter) {
             emit AssertionFailed();
         }
         if (totalStakedBefore + amount != totalStakedAfter) {
+            emit AssertionFailed();
+        }
+    }
+
+    // Test withdraw function
+    function withdraw(uint256 amount) public {
+        uint256 stakerTokenBalanceBefore = token3.balanceOf(address(this));
+        uint256 totalStakedBefore = distribution.totalStakedTokensAmount();
+        distribution.withdraw(amount);
+        uint256 stakerTokenBalanceAfter = token3.balanceOf(address(this));
+        uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
+
+        if (stakerTokenBalanceBefore + amount != stakerTokenBalanceAfter) {
+            emit AssertionFailed();
+        }
+        if (totalStakedBefore - amount != totalStakedAfter) {
             emit AssertionFailed();
         }
     }
