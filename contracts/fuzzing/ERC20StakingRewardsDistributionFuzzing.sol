@@ -47,6 +47,11 @@ contract MockUser {
     function addRewards(address rewardToken, uint256 amount) public {
         distribution.addRewards(rewardToken, amount);
     }
+
+    // Test recoverUnassignedRewards function
+    function recoverUnassignedRewards() public {
+        distribution.recoverUnassignedRewards();
+    }
 }
 
 contract ERC20StakingRewardsDistributionFuzzing {
@@ -382,7 +387,7 @@ contract ERC20StakingRewardsDistributionFuzzing {
             distribution.rewardAmount(rewardToken);
         uint256 distributionRewardBalanceBefore =
             IERC20(rewardToken).balanceOf(address(distribution));
-        distribution.addRewards(rewardToken, amount);
+        mockUser.addRewards(rewardToken, amount);
         uint256 distributionRewardAmountAfter =
             distribution.rewardAmount(rewardToken);
         uint256 distributionRewardBalanceAfter =
@@ -424,6 +429,66 @@ contract ERC20StakingRewardsDistributionFuzzing {
             address(distribution)
         );
         distribution.recoverUnassignedRewards();
+        uint256[] memory ownerRewardBalancesAfter;
+        ownerRewardBalancesAfter[0] = token1.balanceOf(address(this));
+        ownerRewardBalancesAfter[1] = token2.balanceOf(address(this));
+        uint256[] memory distributionRewardBalancesAfter;
+        distributionRewardBalancesAfter[0] = token1.balanceOf(
+            address(distribution)
+        );
+        distributionRewardBalancesAfter[1] = token2.balanceOf(
+            address(distribution)
+        );
+        uint256[] memory recoverableRewardsAfter;
+        recoverableRewardsAfter[0] = distribution.recoverableUnassignedReward(
+            address(token1)
+        );
+        recoverableRewardsAfter[1] = distribution.recoverableUnassignedReward(
+            address(token2)
+        );
+
+        for (uint256 i; i < recoverableRewards.length; i++) {
+            // Assert owner balances increase by expected amount
+            if (
+                ownerRewardBalancesBefore[i] + recoverableRewards[i] !=
+                ownerRewardBalancesAfter[i]
+            ) {
+                emit AssertionFailed();
+            }
+            // Assert distribution balances decrease by expected amount
+            if (
+                distributionRewardBalancesBefore[i] - recoverableRewards[i] !=
+                distributionRewardBalancesAfter[i]
+            ) {
+                emit AssertionFailed();
+            }
+            // Assert recoverable amounts are now 0
+            if (recoverableRewardsAfter[i] > 0) {
+                emit AssertionFailed();
+            }
+        }
+    }
+
+    // Test recoverUnassignedRewardsAsUser function
+    function recoverUnassignedRewardsAsUser() public {
+        uint256[] memory recoverableRewards;
+        recoverableRewards[0] = distribution.recoverableUnassignedReward(
+            address(token1)
+        );
+        recoverableRewards[1] = distribution.recoverableUnassignedReward(
+            address(token2)
+        );
+        uint256[] memory ownerRewardBalancesBefore;
+        ownerRewardBalancesBefore[0] = token1.balanceOf(address(this));
+        ownerRewardBalancesBefore[1] = token2.balanceOf(address(this));
+        uint256[] memory distributionRewardBalancesBefore;
+        distributionRewardBalancesBefore[0] = token1.balanceOf(
+            address(distribution)
+        );
+        distributionRewardBalancesBefore[1] = token2.balanceOf(
+            address(distribution)
+        );
+        mockUser.recoverUnassignedRewards();
         uint256[] memory ownerRewardBalancesAfter;
         ownerRewardBalancesAfter[0] = token1.balanceOf(address(this));
         ownerRewardBalancesAfter[1] = token2.balanceOf(address(this));
