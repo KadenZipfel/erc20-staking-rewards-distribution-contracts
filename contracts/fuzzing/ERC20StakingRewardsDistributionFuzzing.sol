@@ -32,6 +32,11 @@ contract MockUser {
     function claim(uint256[] memory amounts) public {
         distribution.claim(amounts, address(this));
     }
+
+    // Test claimAll function
+    function claimAll() public {
+        distribution.claimAll(address(this));
+    }
 }
 
 contract ERC20StakingRewardsDistributionFuzzing {
@@ -246,6 +251,29 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256[] memory rewardBalancesAfter;
         rewardBalancesAfter[0] = token1.balanceOf(address(this));
         rewardBalancesAfter[1] = token2.balanceOf(address(this));
+
+        // Assert that reward token balances are increasing by expected amounts
+        for (uint256 i; i < rewardBalancesBefore.length; i++) {
+            if (
+                rewardBalancesBefore[i] + claimableRewards[i] !=
+                rewardBalancesAfter[i]
+            ) {
+                emit AssertionFailed();
+            }
+        }
+    }
+
+    // Test claimAll function as user
+    function claimAllAsUser() public {
+        uint256[] memory claimableRewards =
+            distribution.claimableRewards(address(mockUser));
+        uint256[] memory rewardBalancesBefore;
+        rewardBalancesBefore[0] = token1.balanceOf(address(mockUser));
+        rewardBalancesBefore[1] = token2.balanceOf(address(mockUser));
+        mockUser.claimAll();
+        uint256[] memory rewardBalancesAfter;
+        rewardBalancesAfter[0] = token1.balanceOf(address(mockUser));
+        rewardBalancesAfter[1] = token2.balanceOf(address(mockUser));
 
         // Assert that reward token balances are increasing by expected amounts
         for (uint256 i; i < rewardBalancesBefore.length; i++) {
