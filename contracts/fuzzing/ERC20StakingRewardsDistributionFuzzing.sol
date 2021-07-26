@@ -37,6 +37,16 @@ contract MockUser {
     function claimAll() public {
         distribution.claimAll(address(this));
     }
+
+    // Test cancel function
+    function cancel() public {
+        distribution.cancel();
+    }
+
+    // Test addRewards function
+    function addRewards(address rewardToken, uint256 amount) public {
+        distribution.addRewards(rewardToken, amount);
+    }
 }
 
 contract ERC20StakingRewardsDistributionFuzzing {
@@ -318,8 +328,50 @@ contract ERC20StakingRewardsDistributionFuzzing {
         }
     }
 
+    // Test cancel function as user
+    function cancelAsUser() public {
+        mockUser.cancel();
+
+        // Assert revert if non-owner
+        emit AssertionFailed();
+    }
+
     // Test addRewards function
     function addRewards(uint256 seed, uint256 amount) public {
+        address rewardToken;
+        if (seed % 2 == 0) {
+            rewardToken = address(token1);
+        } else {
+            rewardToken = address(token2);
+        }
+        uint256 distributionRewardAmountBefore =
+            distribution.rewardAmount(rewardToken);
+        uint256 distributionRewardBalanceBefore =
+            IERC20(rewardToken).balanceOf(address(distribution));
+        distribution.addRewards(rewardToken, amount);
+        uint256 distributionRewardAmountAfter =
+            distribution.rewardAmount(rewardToken);
+        uint256 distributionRewardBalanceAfter =
+            IERC20(rewardToken).balanceOf(address(distribution));
+
+        // Assert that tracked reward amount is correctly increased
+        if (
+            distributionRewardAmountBefore + amount !=
+            distributionRewardAmountAfter
+        ) {
+            emit AssertionFailed();
+        }
+        // Assert that distribution reward balance is properly increased
+        if (
+            distributionRewardBalanceBefore + amount !=
+            distributionRewardBalanceAfter
+        ) {
+            emit AssertionFailed();
+        }
+    }
+
+    // Test addRewards function as user
+    function addRewardsAsUser(uint256 seed, uint256 amount) public {
         address rewardToken;
         if (seed % 2 == 0) {
             rewardToken = address(token1);
