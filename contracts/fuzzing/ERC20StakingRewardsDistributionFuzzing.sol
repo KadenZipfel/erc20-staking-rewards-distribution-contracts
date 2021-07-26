@@ -7,11 +7,23 @@ import {
     IERC20
 } from "./FlattenedERC20StakingRewardsDistribution.sol";
 
+contract MockUser {
+    address distribution;
+    address stakingToken;
+
+    constructor(address _distribution, address _stakingToken) {
+        distribution = _distribution;
+        stakingToken = _stakingToken;
+        // Approve staking tokens to distribution
+        IERC20(_stakingToken).approve(_distribution, type(uint256).max);
+    }
+}
+
 contract ERC20StakingRewardsDistributionFuzzing {
     ERC20StakingRewardsDistribution internal distribution;
-    address internal holder;
     address[] rewardTokens;
     uint256[] rewardAmounts;
+    MockUser mockUser;
 
     IERC20 token1;
     IERC20 token2;
@@ -61,6 +73,11 @@ contract ERC20StakingRewardsDistributionFuzzing {
 
         // Approve staking token to distribution
         token3.approve(address(distribution), 10000 * 10**18);
+
+        // Create mock user
+        mockUser = new MockUser(address(distribution), address(token3));
+        // Transfer some staking tokens to mock user
+        token3.transfer(address(mockUser), 100 * 10**18);
     }
 
     // Test stake function
