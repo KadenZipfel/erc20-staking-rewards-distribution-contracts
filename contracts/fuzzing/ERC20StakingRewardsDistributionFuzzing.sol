@@ -8,14 +8,19 @@ import {
 } from "./FlattenedERC20StakingRewardsDistribution.sol";
 
 contract MockUser {
-    address distribution;
+    ERC20StakingRewardsDistribution internal distribution;
     address stakingToken;
 
     constructor(address _distribution, address _stakingToken) {
-        distribution = _distribution;
+        distribution = ERC20StakingRewardsDistribution(_distribution);
         stakingToken = _stakingToken;
         // Approve staking tokens to distribution
         IERC20(_stakingToken).approve(_distribution, type(uint256).max);
+    }
+
+    // Test stake function
+    function stake(uint256 amount) public {
+        distribution.stake(amount);
     }
 }
 
@@ -89,6 +94,32 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256 stakerTokenBalanceAfter = token3.balanceOf(address(this));
         uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
         uint256 stakedTokensAfter = distribution.stakedTokensOf(address(this));
+
+        // Assert that staker token balance decreases by amount
+        if (stakerTokenBalanceBefore - amount != stakerTokenBalanceAfter) {
+            emit AssertionFailed();
+        }
+        // Assert that total staked increases by amount
+        if (totalStakedBefore + amount != totalStakedAfter) {
+            emit AssertionFailed();
+        }
+        // Assert that staked tokens increases by amount
+        if (stakedTokensBefore + amount != stakedTokensAfter) {
+            emit AssertionFailed();
+        }
+    }
+
+    // Test stake function as user
+    function stakeAsUser(uint256 amount) public {
+        uint256 stakerTokenBalanceBefore = token3.balanceOf(address(mockUser));
+        uint256 totalStakedBefore = distribution.totalStakedTokensAmount();
+        uint256 stakedTokensBefore =
+            distribution.stakedTokensOf(address(mockUser));
+        mockUser.stake(amount);
+        uint256 stakerTokenBalanceAfter = token3.balanceOf(address(mockUser));
+        uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
+        uint256 stakedTokensAfter =
+            distribution.stakedTokensOf(address(mockUser));
 
         // Assert that staker token balance decreases by amount
         if (stakerTokenBalanceBefore - amount != stakerTokenBalanceAfter) {
