@@ -22,6 +22,11 @@ contract MockUser {
     function stake(uint256 amount) public {
         distribution.stake(amount);
     }
+
+    // Test withdraw function
+    function withdraw(uint256 amount) public {
+        distribution.withdraw(amount);
+    }
 }
 
 contract ERC20StakingRewardsDistributionFuzzing {
@@ -144,6 +149,32 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256 stakerTokenBalanceAfter = token3.balanceOf(address(this));
         uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
         uint256 stakedTokensAfter = distribution.stakedTokensOf(address(this));
+
+        // Assert that staker token balance increases by amount
+        if (stakerTokenBalanceBefore + amount != stakerTokenBalanceAfter) {
+            emit AssertionFailed();
+        }
+        // Assert that total staked decreases by amount
+        if (totalStakedBefore - amount != totalStakedAfter) {
+            emit AssertionFailed();
+        }
+        // Assert that staked tokens decreases by amount
+        if (stakedTokensBefore - amount != stakedTokensAfter) {
+            emit AssertionFailed();
+        }
+    }
+
+    // Test withdraw function as user
+    function withdrawAsUser(uint256 amount) public {
+        uint256 stakerTokenBalanceBefore = token3.balanceOf(address(mockUser));
+        uint256 totalStakedBefore = distribution.totalStakedTokensAmount();
+        uint256 stakedTokensBefore =
+            distribution.stakedTokensOf(address(mockUser));
+        mockUser.withdraw(amount);
+        uint256 stakerTokenBalanceAfter = token3.balanceOf(address(mockUser));
+        uint256 totalStakedAfter = distribution.totalStakedTokensAmount();
+        uint256 stakedTokensAfter =
+            distribution.stakedTokensOf(address(mockUser));
 
         // Assert that staker token balance increases by amount
         if (stakerTokenBalanceBefore + amount != stakerTokenBalanceAfter) {
