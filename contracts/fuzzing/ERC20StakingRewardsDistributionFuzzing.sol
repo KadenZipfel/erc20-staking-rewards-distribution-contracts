@@ -294,8 +294,6 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256 rewardBalancesAfter1 = token1.balanceOf(address(mockUser));
         uint256 rewardBalancesAfter2 = token2.balanceOf(address(mockUser));
 
-        emit AssertionFailed();
-
         // Assert that reward token balances are increasing by expected amounts
         if (
             rewardBalancesBefore1 + claimableRewards[0] != rewardBalancesAfter1
