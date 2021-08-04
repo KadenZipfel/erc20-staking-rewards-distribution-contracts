@@ -264,10 +264,6 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256[] memory claimableRewards =
             distribution.claimableRewards(address(this));
 
-        if (claimableRewards[0] + claimableRewards[1] > 0) {
-            emit AssertionFailed();
-        }
-
         uint256 rewardBalancesBefore1 = token1.balanceOf(address(this));
         uint256 rewardBalancesBefore2 = token2.balanceOf(address(this));
         distribution.claimAll(address(this));
