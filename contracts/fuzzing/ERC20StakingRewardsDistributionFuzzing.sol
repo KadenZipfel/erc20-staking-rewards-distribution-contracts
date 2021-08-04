@@ -309,16 +309,17 @@ contract ERC20StakingRewardsDistributionFuzzing {
 
     // Test cancel function
     function cancel() public {
-        uint256[] memory distributionRewardBalances;
-        distributionRewardBalances[0] = token1.balanceOf(address(distribution));
-        distributionRewardBalances[1] = token2.balanceOf(address(distribution));
-        uint256[] memory ownerRewardBalancesBefore;
-        ownerRewardBalancesBefore[0] = token1.balanceOf(address(this));
-        ownerRewardBalancesBefore[1] = token2.balanceOf(address(this));
+        emit AssertionFailed();
+
+        uint256 distributionRewardBalances1 =
+            token1.balanceOf(address(distribution));
+        uint256 distributionRewardBalances2 =
+            token2.balanceOf(address(distribution));
+        uint256 ownerRewardBalancesBefore1 = token1.balanceOf(address(this));
+        uint256 ownerRewardBalancesBefore2 = token2.balanceOf(address(this));
         distribution.cancel();
-        uint256[] memory ownerRewardBalancesAfter;
-        ownerRewardBalancesAfter[0] = token1.balanceOf(address(this));
-        ownerRewardBalancesAfter[1] = token2.balanceOf(address(this));
+        uint256 ownerRewardBalancesAfter1 = token1.balanceOf(address(this));
+        uint256 ownerRewardBalancesAfter2 = token2.balanceOf(address(this));
 
         emit AssertionFailed();
 
@@ -327,13 +328,17 @@ contract ERC20StakingRewardsDistributionFuzzing {
             emit AssertionFailed();
         }
         // Assert that all rewards transferred to owner address
-        for (uint256 i; i < distributionRewardBalances.length; i++) {
-            if (
-                ownerRewardBalancesAfter[i] + distributionRewardBalances[i] !=
-                ownerRewardBalancesAfter[i]
-            ) {
-                emit AssertionFailed();
-            }
+        if (
+            ownerRewardBalancesBefore1 + distributionRewardBalances1 !=
+            ownerRewardBalancesAfter1
+        ) {
+            emit AssertionFailed();
+        }
+        if (
+            ownerRewardBalancesBefore2 + distributionRewardBalances2 !=
+            ownerRewardBalancesAfter2
+        ) {
+            emit AssertionFailed();
         }
         // Assert that cancelled = true
         if (!distribution.canceled()) {
