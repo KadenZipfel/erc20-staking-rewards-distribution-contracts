@@ -448,8 +448,6 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256 recoverableRewardsAfter2 =
             distribution.recoverableUnassignedReward(address(token2));
 
-        emit AssertionFailed();
-
         // Assert owner balances increase by expected amount
         if (
             ownerRewardBalancesBefore1 + recoverableRewards1 !=
@@ -512,8 +510,6 @@ contract ERC20StakingRewardsDistributionFuzzing {
             distribution.recoverableUnassignedReward(address(token1));
         uint256 recoverableRewardsAfter2 =
             distribution.recoverableUnassignedReward(address(token2));
-
-        emit AssertionFailed();
 
         // Assert owner balances increase by expected amount
         if (
