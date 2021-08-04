@@ -225,6 +225,8 @@ contract ERC20StakingRewardsDistributionFuzzing {
         rewardBalancesAfter[0] = token1.balanceOf(address(this));
         rewardBalancesAfter[1] = token2.balanceOf(address(this));
 
+        emit AssertionFailed();
+
         // Assert that all reward balances increase by corresponding amounts
         for (uint256 i; i < rewardBalancesBefore.length; i++) {
             if (
@@ -245,6 +247,8 @@ contract ERC20StakingRewardsDistributionFuzzing {
         rewardBalancesAfter[0] = token1.balanceOf(address(mockUser));
         rewardBalancesAfter[1] = token2.balanceOf(address(mockUser));
 
+        emit AssertionFailed();
+
         // Assert that all reward balances increase by corresponding amounts
         for (uint256 i; i < rewardBalancesBefore.length; i++) {
             if (
@@ -259,22 +263,27 @@ contract ERC20StakingRewardsDistributionFuzzing {
     function claimAll() public {
         uint256[] memory claimableRewards =
             distribution.claimableRewards(address(this));
-        uint256[] memory rewardBalancesBefore;
-        rewardBalancesBefore[0] = token1.balanceOf(address(this));
-        rewardBalancesBefore[1] = token2.balanceOf(address(this));
+
+        if (claimableRewards[0] + claimableRewards[1] > 0) {
+            emit AssertionFailed();
+        }
+
+        uint256 rewardBalancesBefore1 = token1.balanceOf(address(this));
+        uint256 rewardBalancesBefore2 = token2.balanceOf(address(this));
         distribution.claimAll(address(this));
-        uint256[] memory rewardBalancesAfter;
-        rewardBalancesAfter[0] = token1.balanceOf(address(this));
-        rewardBalancesAfter[1] = token2.balanceOf(address(this));
+        uint256 rewardBalancesAfter1 = token1.balanceOf(address(this));
+        uint256 rewardBalancesAfter2 = token2.balanceOf(address(this));
 
         // Assert that reward token balances are increasing by expected amounts
-        for (uint256 i; i < rewardBalancesBefore.length; i++) {
-            if (
-                rewardBalancesBefore[i] + claimableRewards[i] !=
-                rewardBalancesAfter[i]
-            ) {
-                emit AssertionFailed();
-            }
+        if (
+            rewardBalancesBefore1 + claimableRewards[0] != rewardBalancesAfter1
+        ) {
+            emit AssertionFailed();
+        }
+        if (
+            rewardBalancesBefore2 + claimableRewards[1] != rewardBalancesAfter2
+        ) {
+            emit AssertionFailed();
         }
     }
 
@@ -289,6 +298,8 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256[] memory rewardBalancesAfter;
         rewardBalancesAfter[0] = token1.balanceOf(address(mockUser));
         rewardBalancesAfter[1] = token2.balanceOf(address(mockUser));
+
+        emit AssertionFailed();
 
         // Assert that reward token balances are increasing by expected amounts
         for (uint256 i; i < rewardBalancesBefore.length; i++) {
@@ -313,6 +324,8 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256[] memory ownerRewardBalancesAfter;
         ownerRewardBalancesAfter[0] = token1.balanceOf(address(this));
         ownerRewardBalancesAfter[1] = token2.balanceOf(address(this));
+
+        emit AssertionFailed();
 
         // Assert that contract owner cancelled
         if (msg.sender != distribution.owner()) {
@@ -447,6 +460,8 @@ contract ERC20StakingRewardsDistributionFuzzing {
             address(token2)
         );
 
+        emit AssertionFailed();
+
         for (uint256 i; i < recoverableRewards.length; i++) {
             // Assert owner balances increase by expected amount
             if (
@@ -506,6 +521,8 @@ contract ERC20StakingRewardsDistributionFuzzing {
         recoverableRewardsAfter[1] = distribution.recoverableUnassignedReward(
             address(token2)
         );
+
+        emit AssertionFailed();
 
         for (uint256 i; i < recoverableRewards.length; i++) {
             // Assert owner balances increase by expected amount
