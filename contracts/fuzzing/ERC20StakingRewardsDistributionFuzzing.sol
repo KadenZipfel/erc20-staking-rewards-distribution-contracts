@@ -291,24 +291,25 @@ contract ERC20StakingRewardsDistributionFuzzing {
     function claimAllAsUser() public {
         uint256[] memory claimableRewards =
             distribution.claimableRewards(address(mockUser));
-        uint256[] memory rewardBalancesBefore;
-        rewardBalancesBefore[0] = token1.balanceOf(address(mockUser));
-        rewardBalancesBefore[1] = token2.balanceOf(address(mockUser));
+
+        uint256 rewardBalancesBefore1 = token1.balanceOf(address(mockUser));
+        uint256 rewardBalancesBefore2 = token2.balanceOf(address(mockUser));
         mockUser.claimAll();
-        uint256[] memory rewardBalancesAfter;
-        rewardBalancesAfter[0] = token1.balanceOf(address(mockUser));
-        rewardBalancesAfter[1] = token2.balanceOf(address(mockUser));
+        uint256 rewardBalancesAfter1 = token1.balanceOf(address(mockUser));
+        uint256 rewardBalancesAfter2 = token2.balanceOf(address(mockUser));
 
         emit AssertionFailed();
 
         // Assert that reward token balances are increasing by expected amounts
-        for (uint256 i; i < rewardBalancesBefore.length; i++) {
-            if (
-                rewardBalancesBefore[i] + claimableRewards[i] !=
-                rewardBalancesAfter[i]
-            ) {
-                emit AssertionFailed();
-            }
+        if (
+            rewardBalancesBefore1 + claimableRewards[0] != rewardBalancesAfter1
+        ) {
+            emit AssertionFailed();
+        }
+        if (
+            rewardBalancesBefore2 + claimableRewards[1] != rewardBalancesAfter2
+        ) {
+            emit AssertionFailed();
         }
     }
 
