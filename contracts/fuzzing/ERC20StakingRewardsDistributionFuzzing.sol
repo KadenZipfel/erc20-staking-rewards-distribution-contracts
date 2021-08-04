@@ -270,14 +270,14 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256 rewardBalancesAfter1 = token1.balanceOf(address(this));
         uint256 rewardBalancesAfter2 = token2.balanceOf(address(this));
 
-        // Assert that reward token balances are increasing by expected amounts
+        // Assert that reward token balances are increasing at least by expected amounts
         if (
-            rewardBalancesBefore1 + claimableRewards[0] != rewardBalancesAfter1
+            rewardBalancesBefore1 + claimableRewards[0] > rewardBalancesAfter1
         ) {
             emit AssertionFailed();
         }
         if (
-            rewardBalancesBefore2 + claimableRewards[1] != rewardBalancesAfter2
+            rewardBalancesBefore2 + claimableRewards[1] > rewardBalancesAfter2
         ) {
             emit AssertionFailed();
         }
@@ -294,14 +294,14 @@ contract ERC20StakingRewardsDistributionFuzzing {
         uint256 rewardBalancesAfter1 = token1.balanceOf(address(mockUser));
         uint256 rewardBalancesAfter2 = token2.balanceOf(address(mockUser));
 
-        // Assert that reward token balances are increasing by expected amounts
+        // Assert that reward token balances are increasing at least by expected amounts
         if (
-            rewardBalancesBefore1 + claimableRewards[0] != rewardBalancesAfter1
+            rewardBalancesBefore1 + claimableRewards[0] > rewardBalancesAfter1
         ) {
             emit AssertionFailed();
         }
         if (
-            rewardBalancesBefore2 + claimableRewards[1] != rewardBalancesAfter2
+            rewardBalancesBefore2 + claimableRewards[1] > rewardBalancesAfter2
         ) {
             emit AssertionFailed();
         }
