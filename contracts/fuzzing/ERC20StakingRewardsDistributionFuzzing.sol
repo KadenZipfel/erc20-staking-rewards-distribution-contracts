@@ -424,63 +424,66 @@ contract ERC20StakingRewardsDistributionFuzzing {
 
     // Test recoverUnassignedRewards function
     function recoverUnassignedRewards() public {
-        uint256[] memory recoverableRewards;
-        recoverableRewards[0] = distribution.recoverableUnassignedReward(
-            address(token1)
-        );
-        recoverableRewards[1] = distribution.recoverableUnassignedReward(
-            address(token2)
-        );
-        uint256[] memory ownerRewardBalancesBefore;
-        ownerRewardBalancesBefore[0] = token1.balanceOf(address(this));
-        ownerRewardBalancesBefore[1] = token2.balanceOf(address(this));
-        uint256[] memory distributionRewardBalancesBefore;
-        distributionRewardBalancesBefore[0] = token1.balanceOf(
-            address(distribution)
-        );
-        distributionRewardBalancesBefore[1] = token2.balanceOf(
-            address(distribution)
-        );
+        uint256 recoverableRewards1 =
+            distribution.recoverableUnassignedReward(address(token1));
+        uint256 recoverableRewards2 =
+            distribution.recoverableUnassignedReward(address(token2));
+        uint256 ownerRewardBalancesBefore1 = token1.balanceOf(address(this));
+        uint256 ownerRewardBalancesBefore2 = token2.balanceOf(address(this));
+        uint256 distributionRewardBalancesBefore1 =
+            token1.balanceOf(address(distribution));
+        uint256 distributionRewardBalancesBefore2 =
+            token2.balanceOf(address(distribution));
+
         distribution.recoverUnassignedRewards();
-        uint256[] memory ownerRewardBalancesAfter;
-        ownerRewardBalancesAfter[0] = token1.balanceOf(address(this));
-        ownerRewardBalancesAfter[1] = token2.balanceOf(address(this));
-        uint256[] memory distributionRewardBalancesAfter;
-        distributionRewardBalancesAfter[0] = token1.balanceOf(
-            address(distribution)
-        );
-        distributionRewardBalancesAfter[1] = token2.balanceOf(
-            address(distribution)
-        );
-        uint256[] memory recoverableRewardsAfter;
-        recoverableRewardsAfter[0] = distribution.recoverableUnassignedReward(
-            address(token1)
-        );
-        recoverableRewardsAfter[1] = distribution.recoverableUnassignedReward(
-            address(token2)
-        );
+
+        uint256 ownerRewardBalancesAfter1 = token1.balanceOf(address(this));
+        uint256 ownerRewardBalancesAfter2 = token2.balanceOf(address(this));
+        uint256 distributionRewardBalancesAfter1 =
+            token1.balanceOf(address(distribution));
+        uint256 distributionRewardBalancesAfter2 =
+            token2.balanceOf(address(distribution));
+        uint256 recoverableRewardsAfter1 =
+            distribution.recoverableUnassignedReward(address(token1));
+        uint256 recoverableRewardsAfter2 =
+            distribution.recoverableUnassignedReward(address(token2));
 
         emit AssertionFailed();
 
-        for (uint256 i; i < recoverableRewards.length; i++) {
-            // Assert owner balances increase by expected amount
-            if (
-                ownerRewardBalancesBefore[i] + recoverableRewards[i] !=
-                ownerRewardBalancesAfter[i]
-            ) {
-                emit AssertionFailed();
-            }
-            // Assert distribution balances decrease by expected amount
-            if (
-                distributionRewardBalancesBefore[i] - recoverableRewards[i] !=
-                distributionRewardBalancesAfter[i]
-            ) {
-                emit AssertionFailed();
-            }
-            // Assert recoverable amounts are now 0
-            if (recoverableRewardsAfter[i] > 0) {
-                emit AssertionFailed();
-            }
+        // Assert owner balances increase by expected amount
+        if (
+            ownerRewardBalancesBefore1 + recoverableRewards1 !=
+            ownerRewardBalancesAfter1
+        ) {
+            emit AssertionFailed();
+        }
+        if (
+            ownerRewardBalancesBefore2 + recoverableRewards2 !=
+            ownerRewardBalancesAfter2
+        ) {
+            emit AssertionFailed();
+        }
+
+        // Assert distribution balances decrease by expected amount
+        if (
+            distributionRewardBalancesBefore1 - recoverableRewards1 !=
+            distributionRewardBalancesAfter1
+        ) {
+            emit AssertionFailed();
+        }
+        if (
+            distributionRewardBalancesBefore2 - recoverableRewards2 !=
+            distributionRewardBalancesAfter2
+        ) {
+            emit AssertionFailed();
+        }
+
+        // Assert recoverable amounts are now 0
+        if (recoverableRewardsAfter1 > 0) {
+            emit AssertionFailed();
+        }
+        if (recoverableRewardsAfter2 > 0) {
+            emit AssertionFailed();
         }
     }
 
