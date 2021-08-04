@@ -309,48 +309,17 @@ contract ERC20StakingRewardsDistributionFuzzing {
 
     // Test cancel function
     function cancel() public {
-        emit AssertionFailed();
-
-        uint256 distributionRewardBalances1 =
-            token1.balanceOf(address(distribution));
-        uint256 distributionRewardBalances2 =
-            token2.balanceOf(address(distribution));
-        uint256 ownerRewardBalancesBefore1 = token1.balanceOf(address(this));
-        uint256 ownerRewardBalancesBefore2 = token2.balanceOf(address(this));
         distribution.cancel();
-        uint256 ownerRewardBalancesAfter1 = token1.balanceOf(address(this));
-        uint256 ownerRewardBalancesAfter2 = token2.balanceOf(address(this));
 
+        // Assert revert since after startingTimestamp
         emit AssertionFailed();
-
-        // Assert that contract owner cancelled
-        if (msg.sender != distribution.owner()) {
-            emit AssertionFailed();
-        }
-        // Assert that all rewards transferred to owner address
-        if (
-            ownerRewardBalancesBefore1 + distributionRewardBalances1 !=
-            ownerRewardBalancesAfter1
-        ) {
-            emit AssertionFailed();
-        }
-        if (
-            ownerRewardBalancesBefore2 + distributionRewardBalances2 !=
-            ownerRewardBalancesAfter2
-        ) {
-            emit AssertionFailed();
-        }
-        // Assert that cancelled = true
-        if (!distribution.canceled()) {
-            emit AssertionFailed();
-        }
     }
 
     // Test cancel function as user
     function cancelAsUser() public {
         mockUser.cancel();
 
-        // Assert revert if non-owner
+        // Assert revert since after startingTimestamp
         emit AssertionFailed();
     }
 
@@ -422,61 +391,61 @@ contract ERC20StakingRewardsDistributionFuzzing {
         }
     }
 
-    // Test recoverUnassignedRewards function
-    function recoverUnassignedRewards() public {
-        uint256 recoverableRewards1 =
-            distribution.recoverableUnassignedReward(address(token1));
-        uint256 recoverableRewards2 =
-            distribution.recoverableUnassignedReward(address(token2));
-        uint256 ownerRewardBalancesBefore1 = token1.balanceOf(address(this));
-        uint256 ownerRewardBalancesBefore2 = token2.balanceOf(address(this));
+    // // Test recoverUnassignedRewards function
+    // function recoverUnassignedRewards() public {
+    //     uint256 recoverableRewards1 =
+    //         distribution.recoverableUnassignedReward(address(token1));
+    //     uint256 recoverableRewards2 =
+    //         distribution.recoverableUnassignedReward(address(token2));
+    //     uint256 ownerRewardBalancesBefore1 = token1.balanceOf(address(this));
+    //     uint256 ownerRewardBalancesBefore2 = token2.balanceOf(address(this));
 
-        distribution.recoverUnassignedRewards();
+    //     distribution.recoverUnassignedRewards();
 
-        uint256 ownerRewardBalancesAfter1 = token1.balanceOf(address(this));
-        uint256 ownerRewardBalancesAfter2 = token2.balanceOf(address(this));
+    //     uint256 ownerRewardBalancesAfter1 = token1.balanceOf(address(this));
+    //     uint256 ownerRewardBalancesAfter2 = token2.balanceOf(address(this));
 
-        // Assert owner balances increase by at least expected amount
-        if (
-            ownerRewardBalancesBefore1 + recoverableRewards1 >
-            ownerRewardBalancesAfter1
-        ) {
-            emit AssertionFailed();
-        }
-        if (
-            ownerRewardBalancesBefore2 + recoverableRewards2 >
-            ownerRewardBalancesAfter2
-        ) {
-            emit AssertionFailed();
-        }
-    }
+    //     // Assert owner balances increase by at least expected amount
+    //     if (
+    //         ownerRewardBalancesBefore1 + recoverableRewards1 >
+    //         ownerRewardBalancesAfter1
+    //     ) {
+    //         emit AssertionFailed();
+    //     }
+    //     if (
+    //         ownerRewardBalancesBefore2 + recoverableRewards2 >
+    //         ownerRewardBalancesAfter2
+    //     ) {
+    //         emit AssertionFailed();
+    //     }
+    // }
 
-    // Test recoverUnassignedRewardsAsUser function
-    function recoverUnassignedRewardsAsUser() public {
-        uint256 recoverableRewards1 =
-            distribution.recoverableUnassignedReward(address(token1));
-        uint256 recoverableRewards2 =
-            distribution.recoverableUnassignedReward(address(token2));
-        uint256 ownerRewardBalancesBefore1 = token1.balanceOf(address(this));
-        uint256 ownerRewardBalancesBefore2 = token2.balanceOf(address(this));
+    // // Test recoverUnassignedRewardsAsUser function
+    // function recoverUnassignedRewardsAsUser() public {
+    //     uint256 recoverableRewards1 =
+    //         distribution.recoverableUnassignedReward(address(token1));
+    //     uint256 recoverableRewards2 =
+    //         distribution.recoverableUnassignedReward(address(token2));
+    //     uint256 ownerRewardBalancesBefore1 = token1.balanceOf(address(this));
+    //     uint256 ownerRewardBalancesBefore2 = token2.balanceOf(address(this));
 
-        mockUser.recoverUnassignedRewards();
+    //     mockUser.recoverUnassignedRewards();
 
-        uint256 ownerRewardBalancesAfter1 = token1.balanceOf(address(this));
-        uint256 ownerRewardBalancesAfter2 = token2.balanceOf(address(this));
+    //     uint256 ownerRewardBalancesAfter1 = token1.balanceOf(address(this));
+    //     uint256 ownerRewardBalancesAfter2 = token2.balanceOf(address(this));
 
-        // Assert owner balances increase by at least expected amount
-        if (
-            ownerRewardBalancesBefore1 + recoverableRewards1 >
-            ownerRewardBalancesAfter1
-        ) {
-            emit AssertionFailed();
-        }
-        if (
-            ownerRewardBalancesBefore2 + recoverableRewards2 >
-            ownerRewardBalancesAfter2
-        ) {
-            emit AssertionFailed();
-        }
-    }
+    //     // Assert owner balances increase by at least expected amount
+    //     if (
+    //         ownerRewardBalancesBefore1 + recoverableRewards1 >
+    //         ownerRewardBalancesAfter1
+    //     ) {
+    //         emit AssertionFailed();
+    //     }
+    //     if (
+    //         ownerRewardBalancesBefore2 + recoverableRewards2 >
+    //         ownerRewardBalancesAfter2
+    //     ) {
+    //         emit AssertionFailed();
+    //     }
+    // }
 }
