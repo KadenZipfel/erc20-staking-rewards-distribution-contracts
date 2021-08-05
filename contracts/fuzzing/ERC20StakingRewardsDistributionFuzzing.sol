@@ -217,45 +217,35 @@ contract ERC20StakingRewardsDistributionFuzzing {
 
     // Test claim function
     function claim(uint256[] memory amounts) public {
-        uint256[] memory rewardBalancesBefore;
-        rewardBalancesBefore[0] = token1.balanceOf(address(this));
-        rewardBalancesBefore[1] = token2.balanceOf(address(this));
+        uint256 rewardBalancesBefore1 = token1.balanceOf(address(this));
+        uint256 rewardBalancesBefore2 = token2.balanceOf(address(this));
         distribution.claim(amounts, address(this));
-        uint256[] memory rewardBalancesAfter;
-        rewardBalancesAfter[0] = token1.balanceOf(address(this));
-        rewardBalancesAfter[1] = token2.balanceOf(address(this));
+        uint256 rewardBalancesAfter1 = token1.balanceOf(address(this));
+        uint256 rewardBalancesAfter2 = token2.balanceOf(address(this));
 
-        emit AssertionFailed();
-
-        // Assert that all reward balances increase by corresponding amounts
-        for (uint256 i; i < rewardBalancesBefore.length; i++) {
-            if (
-                rewardBalancesBefore[i] + amounts[i] != rewardBalancesAfter[i]
-            ) {
-                emit AssertionFailed();
-            }
+        // Assert that reward token balances are increasing at least by expected amounts
+        if (rewardBalancesBefore1 + amounts[0] > rewardBalancesAfter1) {
+            emit AssertionFailed();
+        }
+        if (rewardBalancesBefore2 + amounts[1] > rewardBalancesAfter2) {
+            emit AssertionFailed();
         }
     }
 
     // Test claim function as user
     function claimAsUser(uint256[] memory amounts) public {
-        uint256[] memory rewardBalancesBefore;
-        rewardBalancesBefore[0] = token1.balanceOf(address(mockUser));
-        rewardBalancesBefore[1] = token2.balanceOf(address(mockUser));
+        uint256 rewardBalancesBefore1 = token1.balanceOf(address(mockUser));
+        uint256 rewardBalancesBefore2 = token2.balanceOf(address(mockUser));
         mockUser.claim(amounts);
-        uint256[] memory rewardBalancesAfter;
-        rewardBalancesAfter[0] = token1.balanceOf(address(mockUser));
-        rewardBalancesAfter[1] = token2.balanceOf(address(mockUser));
+        uint256 rewardBalancesAfter1 = token1.balanceOf(address(mockUser));
+        uint256 rewardBalancesAfter2 = token2.balanceOf(address(mockUser));
 
-        emit AssertionFailed();
-
-        // Assert that all reward balances increase by corresponding amounts
-        for (uint256 i; i < rewardBalancesBefore.length; i++) {
-            if (
-                rewardBalancesBefore[i] + amounts[i] != rewardBalancesAfter[i]
-            ) {
-                emit AssertionFailed();
-            }
+        // Assert that reward token balances are increasing at least by expected amounts
+        if (rewardBalancesBefore1 + amounts[0] > rewardBalancesAfter1) {
+            emit AssertionFailed();
+        }
+        if (rewardBalancesBefore2 + amounts[1] > rewardBalancesAfter2) {
+            emit AssertionFailed();
         }
     }
 
